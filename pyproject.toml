@@ -17,7 +17,9 @@ classifiers = [
 dependencies = [
     # Core ML frameworks - PyTorch 2.9.0+cu130 recommended for NVIDIA hardware
     "torch>=2.1.0", "torchvision>=0.16.0",
-    "transformers==4.40.1", "accelerate==0.29.3", "tokenizers==0.19.1", "diffusers==0.28.0", 
+    "transformers==4.40.1", "accelerate==0.29.3", "tokenizers==0.19.1", 
+    "diffusers>=0.35.0",  # Updated for PyTorch 2.9.0 compatibility
+    "huggingface-hub>=0.34.0,<1.0",  # Required by transformers and diffusers 
     
     # Computer vision and image processing
     "albumentations==1.4.0", 
@@ -88,6 +90,9 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# Note: deepspeed 0.12.6 is incompatible with PyTorch 2.9.0 (elastic agent API changes)
+# For inference only, deepspeed is not required. For training with PyTorch 2.9.0,
+# use a newer deepspeed version or downgrade PyTorch to 2.1-2.5
 train = ["deepspeed==0.12.6"]
 dev = ["mypy==1.8.0"]
 
@@ -151,3 +156,9 @@ no_implicit_optional = true
 # - Python 3.13 has breaking API changes incompatible with:
 #   * tokenizers (PyO3 limitation)
 #   * pydantic-core (ForwardRef API changes)
+# - deepspeed 0.12.6 is incompatible with PyTorch 2.9.0 (elastic agent API changes)
+#   Solution: Code has been updated to make deepspeed import optional for inference
+# - diffusers 0.28.0 had deprecated imports that broke with newer dependencies
+#   Solution: Upgraded to diffusers>=0.35.0 with compatibility layer for imports
+# - pytorchvideo 0.1.5 imports functional_tensor which was removed in torchvision 0.24.0
+#   Solution: Added fallback import in pytorchvideo's augmentations.py

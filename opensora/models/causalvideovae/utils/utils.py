@@ -59,8 +59,17 @@ def find_model(model_name):
 #################################################################################
 #                             Training Clip Gradients                           #
 #################################################################################
-import deepspeed
+try:
+    import deepspeed
+    HAS_DEEPSPEED = True
+except ImportError:
+    HAS_DEEPSPEED = False
+    deepspeed = None
+
 def print_grad_norm(model):
+    if not HAS_DEEPSPEED:
+        print("DeepSpeed is not available, skipping gradient norm calculation")
+        return
     # 计算并打印梯度范数
     # model_engine = accelerator.deepspeed_engine_wrapped.engine
     # gradients = model_engine.get_gradients()
