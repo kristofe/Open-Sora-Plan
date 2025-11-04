@@ -1,4 +1,6 @@
-
+need to install manually:
+av
+decord
 
 <h1 align="left"> <a href="">Open-Sora Plan</a></h1>
 
